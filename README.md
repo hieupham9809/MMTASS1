@@ -15,9 +15,9 @@ e. Ứng dụng phải sử dụng Chat Proprocol đã được nhóm định ng
 
 FRONT(java-elclipse): design giao diện (Ý)
 
-BACK: server + database(firebase)
+BACK: server + database(firebase) (Huy)
  server: đăng ký tài khoản, lưu dữ liệu ng dùng, hiển thị list người dùng online. Khi người dùng A click vào một người dùng B
  thì sẽ lấy về từ server địa chỉ IP của người B và tạo kết nối P2P tới người B
  
-CORE(giao thức chat)
+CORE(giao thức chat) (Hiếu + Kiệt)
 http://cs.berry.edu/~nhamid/p2p/
