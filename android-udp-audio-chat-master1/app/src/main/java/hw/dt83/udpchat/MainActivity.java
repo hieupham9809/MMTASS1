@@ -76,8 +76,7 @@ public class MainActivity extends Activity {
 				
 				ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
 				scrollView.setVisibility(View.VISIBLE);
-				EditText displayIP = (EditText) findViewById(R.id.editTextIP);
-				//String address2 = displayIP.getText().toString();
+
 				contactManager = new ContactManager(displayName, getBroadcastIp());
 				startCallListener();
 			}
@@ -131,7 +130,8 @@ public class MainActivity extends Activity {
 				intent.putExtra(EXTRA_CONTACT, contact);
 				String address = ip.toString();
 				address = address.substring(1, address.length());
-
+				EditText displayIP = (EditText) findViewById(R.id.editTextIP);
+				String address2 = displayIP.getText().toString();
 				intent.putExtra(EXTRA_IP, address);
 				intent.putExtra(EXTRA_DISPLAYNAME, displayName);
 				startActivity(intent);
@@ -214,6 +214,9 @@ public class MainActivity extends Activity {
 								
 								Intent intent = new Intent(MainActivity.this, ReceiveCallActivity.class);
 								intent.putExtra(EXTRA_CONTACT, name);
+								EditText displayIP = (EditText) findViewById(R.id.editTextIP);
+								String address2 = displayIP.getText().toString();
+								//intent.putExtra(EXTRA_IP, address2);
 								intent.putExtra(EXTRA_IP, address.substring(1, address.length()));
 								IN_CALL = true;
 								//LISTEN = false;
