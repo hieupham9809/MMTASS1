@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.MyListAdapter;
 import michat.model.User;
 
@@ -37,7 +37,7 @@ public class FriendListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        mIntentFilter=new IntentFilter(MESSAGE.RECEIVE_USERS_ONLINE);
+        mIntentFilter=new IntentFilter(MESSAGES.RECEIVE_USERS_ONLINE);
         registerReceiver(mReceiver,mIntentFilter);
     }
 
@@ -56,8 +56,8 @@ public class FriendListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(FriendListActivity.this,intent.getAction(),Toast.LENGTH_SHORT).show();
-            if (intent.getAction().equals(MESSAGE.RECEIVE_USERS_ONLINE)) {
-                String output=intent.getStringExtra(MESSAGE.RECEIVE_USERS_ONLINE);
+            if (intent.getAction().equals(MESSAGES.RECEIVE_USERS_ONLINE)) {
+                String output=intent.getStringExtra(MESSAGES.RECEIVE_USERS_ONLINE);
 
                 try {
                     ArrayList<User> users=new ObjectMapper().readValue(output,new TypeReference<ArrayList<User>>(){});
@@ -90,7 +90,7 @@ public class FriendListActivity extends AppCompatActivity {
     void callService(){
         mIntentFilter=new IntentFilter();
         Intent serviceIntent=new Intent(FriendListActivity.this,MainService.class);
-        serviceIntent.putExtra(MESSAGE.RECEIVE_USERS_ONLINE,"get");
+        serviceIntent.putExtra(MESSAGES.RECEIVE_USERS_ONLINE,"get");
         startService(serviceIntent);
     }
 }

@@ -13,7 +13,7 @@ import michat.GlobalData;
 import michat.localDB.MessageCountDatabaseHandler;
 import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.User;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 GlobalData.getInstance().setOwner(owner);
                 Toast.makeText(MainActivity.this,owner.getName(),Toast.LENGTH_SHORT).show();
                 Intent serviceIntent=new Intent(MainActivity.this,MainService.class);
-                serviceIntent.setAction(MESSAGE.SEND_INIT_SESSION);
+                serviceIntent.setAction(MESSAGES.SEND_INIT_SESSION);
                 serviceIntent.putExtra("username",txtEmail.getText().toString());
                 startService(serviceIntent);
                 Intent intent = new Intent(MainActivity.this, TabActivity.class);

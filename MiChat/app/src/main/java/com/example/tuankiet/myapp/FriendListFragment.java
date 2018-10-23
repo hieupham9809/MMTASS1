@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.MyListAdapter;
 import michat.model.User;
 
@@ -36,7 +36,7 @@ public class FriendListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        mIntentFilter=new IntentFilter(MESSAGE.RECEIVE_USERS_ONLINE);
+        mIntentFilter=new IntentFilter(MESSAGES.RECEIVE_USERS_ONLINE);
         getContext().registerReceiver(mReceiver,mIntentFilter);
         return inflater.inflate(R.layout.activity_friend_list,container,false);
     }
@@ -75,8 +75,8 @@ public class FriendListFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(getContext(),intent.getAction(),Toast.LENGTH_SHORT).show();
-            if (intent.getAction().equals(MESSAGE.RECEIVE_USERS_ONLINE)) {
-                String output=intent.getStringExtra(MESSAGE.RECEIVE_USERS_ONLINE);
+            if (intent.getAction().equals(MESSAGES.RECEIVE_USERS_ONLINE)) {
+                String output=intent.getStringExtra(MESSAGES.RECEIVE_USERS_ONLINE);
                 try {
                     users.clear();
                     users.addAll(new ObjectMapper().readValue(output,new TypeReference<ArrayList<User>>(){}));
@@ -124,7 +124,7 @@ public class FriendListFragment extends Fragment {
     void callService(){
         mIntentFilter=new IntentFilter();
         Intent serviceIntent=new Intent(getContext(),MainService.class);
-        serviceIntent.setAction(MESSAGE.SEND_GET_USER_ONLINE);
+        serviceIntent.setAction(MESSAGES.SEND_GET_USER_ONLINE);
         getContext().startService(serviceIntent);
     }
 }

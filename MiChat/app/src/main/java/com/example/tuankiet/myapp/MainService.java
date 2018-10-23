@@ -22,7 +22,7 @@ import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
 import michat.model.IP;
 import michat.model.IPINFO;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.Message;
 import michat.model.Msg;
 import michat.model.Packet;
@@ -99,7 +99,7 @@ public class MainService extends Service {
                                 continue;
                             }
                             switch (msg.getType()) {
-                                case MESSAGE.MSG_TYPE_MESSAGE:
+                                case MESSAGES.MSG_TYPE_MESSAGE:
                                     //if user owner cua tin nhan chua co trong csdl thi them user vao
                                     User user = udh.getUser(msg.getData().getOwner());
                                     if (user == null) {
@@ -116,12 +116,12 @@ public class MainService extends Service {
                                     mdh.addMessage(message);
                                     Log.d("MSG COMMING",message.getText());
                                     Intent broadcastIntent = new Intent();
-                                    broadcastIntent.setAction(MESSAGE.RECEIVE_MSG);
+                                    broadcastIntent.setAction(MESSAGES.RECEIVE_MSG);
                                     broadcastIntent.putExtra("tableName", message.getUser().getName());
                                     broadcastIntent.putExtra("id",message.getId());
                                     sendBroadcast(broadcastIntent);
                                     break;
-                                case MESSAGE.MSG_TYPE_CONNECT:
+                                case MESSAGES.MSG_TYPE_CONNECT:
                                     connected=CONNECT_SUCCESS;
                                     Log.d("OWNER2",msg.getData().getOwner());
                                     if(msg.getData().getText().equals("public"))
@@ -129,7 +129,7 @@ public class MainService extends Service {
                                     else
                                         GlobalData.getInstance().getIP(msg.getData().getOwner()).setIsPub(false);
                                     break;
-                                case MESSAGE.MSG_TYPE_RESPONE_SYN:
+                                case MESSAGES.MSG_TYPE_RESPONE_SYN:
                                     Log.d("Response syn",msg.getData().getText());
                                     if (msg.getData().getText().equals("404")) {
                                         syn = SYN_FAILED;
@@ -168,18 +168,18 @@ public class MainService extends Service {
 //                                        }
                                     }
                                     break;
-                                case MESSAGE.MSG_TYPE_INIT_SESSION:
+                                case MESSAGES.MSG_TYPE_INIT_SESSION:
                                     if (msg.getData().getText().equals("200"))
                                         initSession = INISESSION_SUCCESS;
                                     else if (msg.getData().getText().equals("404"))
                                         initSession = INITSESSION_FAILED;
                                     break;
-                                case MESSAGE.MSG_TYPE_ONLINE:
+                                case MESSAGES.MSG_TYPE_ONLINE:
                                     getFriend = GET_FRIEND_SUCESS;
                                     String output = msg.getData().getText();
                                     broadcastIntent = new Intent();
-                                    broadcastIntent.setAction(MESSAGE.RECEIVE_USERS_ONLINE);
-                                    broadcastIntent.putExtra(MESSAGE.RECEIVE_USERS_ONLINE, output);
+                                    broadcastIntent.setAction(MESSAGES.RECEIVE_USERS_ONLINE);
+                                    broadcastIntent.putExtra(MESSAGES.RECEIVE_USERS_ONLINE, output);
                                     sendBroadcast(broadcastIntent);
                                     break;
 
@@ -201,7 +201,7 @@ public class MainService extends Service {
     public int onStartCommand(final Intent intent, int flags, int startId) {
         if(intent.getAction()!=null)
         switch (intent.getAction()){
-            case MESSAGE.SEND_INIT_SESSION:
+            case MESSAGES.SEND_INIT_SESSION:
                 initSession=NOT_INIT_SESSION;
                 String username = intent.getStringExtra("username");
                 new Thread(new Runnable() {
@@ -219,14 +219,14 @@ public class MainService extends Service {
                         }
                         if(initSession==NOT_INIT_SESSION) {
                             Intent broadcastIntent = new Intent();
-                            broadcastIntent.setAction(MESSAGE.INIT_SESSION_FAILED);
+                            broadcastIntent.setAction(MESSAGES.INIT_SESSION_FAILED);
                             sendBroadcast(broadcastIntent);
                         }
                     }
                 }).start();
 
                 break;
-            case MESSAGE.SEND_GET_USER_ONLINE:
+            case MESSAGES.SEND_GET_USER_ONLINE:
                 getFriend = NOT_GET_FRIEND;
                 new Thread(new Runnable() {
                     @Override
@@ -243,14 +243,14 @@ public class MainService extends Service {
                         }
                         if(getFriend==NOT_GET_FRIEND){
                             Intent broadcastIntent = new Intent();
-                            broadcastIntent.setAction(MESSAGE.GET_USER_ONLINE_FAILED);
+                            broadcastIntent.setAction(MESSAGES.GET_USER_ONLINE_FAILED);
                             sendBroadcast(broadcastIntent);
                         }
                     }
                 }).start();
 
                 break;
-            case MESSAGE.SEND_SYN:
+            case MESSAGES.SEND_SYN:
                 syn = NOT_SYN;
                 connected=NOT_CONNECT;
                 String u = intent.getStringExtra("user");
@@ -271,7 +271,7 @@ public class MainService extends Service {
                         }
                         if(syn==NOT_SYN){
                             Intent broadcastIntent = new Intent();
-                            broadcastIntent.setAction(MESSAGE.SYN_FAILED);
+                            broadcastIntent.setAction(MESSAGES.SYN_FAILED);
                             sendBroadcast(broadcastIntent);
                         }
                     }
@@ -279,7 +279,7 @@ public class MainService extends Service {
 
 
                 break;
-            case MESSAGE.SEND_MESSAGE:
+            case MESSAGES.SEND_MESSAGE:
                 if (connected == CONNECT_SUCCESS) {
                     String msg = intent.getStringExtra("msg");
                     String owner = intent.getStringExtra("owner");
@@ -325,7 +325,7 @@ public class MainService extends Service {
 //                Toast.makeText(context, "User not onlined! Message will be saved!", LENGTH_SHORT).show();
 //            }
 //        }
-//        if (intent.getStringExtra(MESSAGE.RECEIVE_USERS_ONLINE) != null) {
+//        if (intent.getStringExtra(MESSAGES.RECEIVE_USERS_ONLINE) != null) {
 //            getFriend = NOT_GET_FRIEND;
 //            try {
 //                while (getFriend == NOT_GET_FRIEND) {

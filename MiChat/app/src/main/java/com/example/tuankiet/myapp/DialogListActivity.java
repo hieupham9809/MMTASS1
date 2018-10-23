@@ -22,7 +22,7 @@ import michat.GlobalData;
 import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
 import michat.model.DialogList;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.Message;
 import michat.model.User;
 
@@ -47,7 +47,7 @@ public class DialogListActivity extends AppCompatActivity {
 
 
 
-        mIntentFilter=new IntentFilter(MESSAGE.RECEIVE_MSG);
+        mIntentFilter=new IntentFilter(MESSAGES.RECEIVE_MSG);
         callService();
 
         //setting dialog list
@@ -70,7 +70,7 @@ public class DialogListActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
 
-                if (intent.getAction().equals(MESSAGE.RECEIVE_MSG)) {
+                if (intent.getAction().equals(MESSAGES.RECEIVE_MSG)) {
                     renderDialog();
                 }
             }
@@ -106,7 +106,7 @@ public class DialogListActivity extends AppCompatActivity {
             public void onDialogClick(IDialog dialog) {
                 Intent serviceIntent=new Intent(DialogListActivity.this,MainService.class);
                 User friend=udh.getUserWithId(dialog.getId());
-                serviceIntent.setAction(MESSAGE.SEND_CONNECT);
+                serviceIntent.setAction(MESSAGES.SEND_CONNECT);
                 serviceIntent.putExtra("connect",friend.getName());
                 startService(serviceIntent);
                 Intent intent=new Intent(DialogListActivity.this,MessageListActivity.class);

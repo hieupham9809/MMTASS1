@@ -34,7 +34,7 @@ import michat.GlobalData;
 import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
 import michat.model.DialogList;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.Message;
 import michat.model.User;
 
@@ -50,7 +50,7 @@ public class DialogListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater,container,savedInstanceState);
-        mIntentFilter=new IntentFilter(MESSAGE.RECEIVE_USERS_ONLINE);
+        mIntentFilter=new IntentFilter(MESSAGES.RECEIVE_USERS_ONLINE);
         getContext().registerReceiver(mReceiver,mIntentFilter);
         return inflater.inflate(R.layout.activity_dialog_list,container,false);
     }
@@ -58,7 +58,7 @@ public class DialogListFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             Toast.makeText(getContext(),intent.getAction(),Toast.LENGTH_SHORT).show();
-            if (intent.getAction().equals(MESSAGE.RECEIVE_MSG)) {
+            if (intent.getAction().equals(MESSAGES.RECEIVE_MSG)) {
                 //onNewMessage();
             }
         }
@@ -107,7 +107,7 @@ public class DialogListFragment extends Fragment {
             public void onDialogClick(IDialog dialog) {
                 Intent serviceIntent=new Intent(getContext(),MainService.class);
                 User friend=udh.getUser(dialog.getId());
-                serviceIntent.setAction(MESSAGE.SEND_SYN);
+                serviceIntent.setAction(MESSAGES.SEND_SYN);
                 serviceIntent.putExtra("user",friend.getName());
                 getContext().startService(serviceIntent);
                 Intent intent=new Intent(getContext(),MessageListActivity.class);
@@ -147,7 +147,7 @@ public class DialogListFragment extends Fragment {
     void callService(){
         mIntentFilter=new IntentFilter();
         Intent serviceIntent=new Intent(getContext(),MainService.class);
-        serviceIntent.setAction(MESSAGE.SEND_GET_USER_ONLINE);
+        serviceIntent.setAction(MESSAGES.SEND_GET_USER_ONLINE);
         getContext().startService(serviceIntent);
     }
     private void onNewMessage(IMessage message){

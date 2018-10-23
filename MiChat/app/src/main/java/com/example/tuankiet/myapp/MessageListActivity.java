@@ -33,7 +33,7 @@ import michat.GlobalData;
 import michat.localDB.MessageCountDatabaseHandler;
 import michat.localDB.MessageDatabaseHandler;
 import michat.localDB.UserDatabaseHandler;
-import michat.model.MESSAGE;
+import michat.model.MESSAGES;
 import michat.model.Message;
 import michat.model.Msg;
 import michat.model.Packet;
@@ -95,7 +95,7 @@ public class MessageListActivity extends AppCompatActivity {
         udh=new UserDatabaseHandler(MessageListActivity.this);
         mcdh=new MessageCountDatabaseHandler(MessageListActivity.this);
         mIntentFilter=new IntentFilter();
-        mIntentFilter.addAction(MESSAGE.RECEIVE_MSG);
+        mIntentFilter.addAction(MESSAGES.RECEIVE_MSG);
         Intent intent=getIntent();;
         String friendId=intent.getStringExtra("friendId");
         input=findViewById(R.id.input);
@@ -166,7 +166,7 @@ public class MessageListActivity extends AppCompatActivity {
             String output=om.writeValueAsString(p);
             //Client.sendString(ds,output, InetAddress,Port);
             Intent serviceIntent=new Intent(MessageListActivity.this,MainService.class);
-            serviceIntent.setAction(MESSAGE.SEND_MESSAGE);
+            serviceIntent.setAction(MESSAGES.SEND_MESSAGE);
             serviceIntent.putExtra("msg", output);
             serviceIntent.putExtra("owner",friend.getName());
             startService(serviceIntent);
@@ -198,7 +198,7 @@ public class MessageListActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (intent.getAction().equals(MESSAGE.RECEIVE_MSG)) {
+            if (intent.getAction().equals(MESSAGES.RECEIVE_MSG)) {
                 mdh.setTableName(intent.getStringExtra("tableName"));
                 Message msg = mdh.getMessage(intent.getStringExtra("id"));
                 Log.d("GEt msg id of",intent.getStringExtra("id"));
