@@ -17,6 +17,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.tuankiet.myapp.R;
+
 public class ReceiveCallActivity extends Activity {
 
 	private static final String LOG_TAG = "ReceiveCall";
@@ -211,7 +213,7 @@ public class ReceiveCallActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.receive_call, menu);
+		//getMenuInflater().inflate(R.menu.receive_call, menu);
 		return true;
 	}
 

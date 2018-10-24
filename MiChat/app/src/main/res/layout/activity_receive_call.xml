@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/incomingCall"
+        android:text="incoming Call"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -28,13 +28,13 @@
             android:id="@+id/buttonAccept"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/accept" />
+            android:text="accept" />
 
         <Button
             android:id="@+id/buttonReject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/reject" />
+            android:text="reject" />
 
     </LinearLayout>
 
@@ -47,7 +47,7 @@
             android:id="@+id/buttonEndCall1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/endCall" />
+            android:text="end Call" />
 
     </LinearLayout>
 

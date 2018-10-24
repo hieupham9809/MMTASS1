@@ -164,7 +164,7 @@ public class MainActivity2 extends Activity {
         // Function to return the broadcast address, based on the IP address of the device
         try {
 
-            WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
             WifiInfo wifiInfo = wifiManager.getConnectionInfo();
             int ipAddress = wifiInfo.getIpAddress();
             String addressString = toBroadcastIp(ipAddress);

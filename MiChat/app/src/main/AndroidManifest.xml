@@ -40,6 +40,12 @@
             android:exported="true" />
 
         <activity android:name=".FriendListActivity" />
+        //thêm vào để test Call
+        <activity android:name="michat.CallOut.MainActivity2"/>
+        <activity android:name="michat.CallOut.MakeCallActivity"/>
+        <activity android:name="michat.CallOut.ReceiveCallActivity"/>
+
+
     </application>
 
 </manifest>

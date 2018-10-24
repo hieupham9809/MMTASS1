@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 
 import android.widget.EditText;
 import android.widget.ImageView;
+import michat.CallOut.MainActivity2;
+import android.content.Intent;
 
 public class TabActivity extends AppCompatActivity {
 
@@ -63,6 +65,17 @@ public class TabActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+
+        // Thêm nút gọi để test
+        FloatingActionButton call = findViewById(R.id.CallButton);
+        call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TabActivity.this, MainActivity2.class);
+                startActivity(intent);
             }
         });
     }

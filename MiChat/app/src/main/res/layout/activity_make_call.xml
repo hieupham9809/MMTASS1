@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:text="@string/calling"
+        android:text="calling"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <LinearLayout
@@ -28,7 +28,7 @@
             android:id="@+id/buttonEndCall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/endCall" />
+            android:text="end call" />
 
     </LinearLayout>
 
