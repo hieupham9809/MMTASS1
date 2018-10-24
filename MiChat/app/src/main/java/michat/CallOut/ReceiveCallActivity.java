@@ -7,8 +7,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tuankiet.myapp.R;
 
@@ -62,7 +65,8 @@ public class ReceiveCallActivity extends Activity {
 					Log.i(LOG_TAG, "Calling " + address.toString());
 					IN_CALL = true;
 					call = new AudioCall(address);
-					call.startCall();
+					requestRecordAudioPermission();
+					//call.startCall();
 					// Hide the buttons as they're not longer required
 					Button accept = (Button) findViewById(R.id.buttonAccept);
 					accept.setEnabled(false);
@@ -105,7 +109,31 @@ public class ReceiveCallActivity extends Activity {
 			}
 		});
 	}
-	
+	private void requestRecordAudioPermission() {
+
+		String requiredPermission = Manifest.permission.RECORD_AUDIO;
+
+		// If the user previously denied this permission then show a message explaining why
+		// this permission is needed
+		if (this.checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+
+		} else {
+
+			Toast.makeText(this, "This app needs to record audio through the microphone....", Toast.LENGTH_SHORT).show();
+			requestPermissions(new String[]{requiredPermission}, 101);
+		}
+
+
+	}
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String permissions[], int[] grantResults) {
+		if (requestCode == 101 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			// This method is called when the  permissions are given
+			call.startCall();
+		}
+
+	}
 	private void endCall() {
 		// End the call and send a notification
 		stopListener();

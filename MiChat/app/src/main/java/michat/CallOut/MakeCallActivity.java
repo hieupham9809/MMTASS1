@@ -41,12 +41,12 @@ public class MakeCallActivity extends Activity {
 		Log.i(LOG_TAG, "MakeCallActivity started!");
 		
 		Intent intent = getIntent();
-		displayName = intent.getStringExtra(MainActivity2.EXTRA_DISPLAYNAME);
-		contactName = intent.getStringExtra(MainActivity2.EXTRA_CONTACT);
+		/*displayName = intent.getStringExtra(MainActivity2.EXTRA_DISPLAYNAME);
+		contactName = intent.getStringExtra(MainActivity2.EXTRA_CONTACT);*/
 		contactIp = intent.getStringExtra(MainActivity2.EXTRA_IP);
 		
 		TextView textView = (TextView) findViewById(R.id.textViewCalling);
-		textView.setText("Calling: " + contactName);
+		textView.setText("Calling: " + contactIp);
 		
 		startListener();
 		makeCall();
@@ -64,7 +64,7 @@ public class MakeCallActivity extends Activity {
 	
 	private void makeCall() {
 		// Send a request to start a call
-		sendMessage("CAL:"+displayName, 50003);
+		sendMessage("CAL:"+contactIp, 50003);
 	}
 	
 	private void endCall() {

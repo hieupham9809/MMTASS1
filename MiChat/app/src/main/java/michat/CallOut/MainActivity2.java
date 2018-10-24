@@ -50,10 +50,12 @@ public class MainActivity2 extends Activity {
         setContentView(R.layout.activity_main_call);
 
         Log.i(LOG_TAG, "UDPChat started");
-
+        Button btnCall = (Button) findViewById(R.id.buttonCall);
+        btnCall.setVisibility(View.VISIBLE);
+        startCallListener();
         // START BUTTON
         // Pressing this buttons initiates the main functionality
-        final Button btnStart = (Button) findViewById(R.id.buttonStart);
+        /*final Button btnStart = (Button) findViewById(R.id.buttonStart);
         btnStart.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -62,32 +64,32 @@ public class MainActivity2 extends Activity {
                 Log.i(LOG_TAG, "Start button pressed");
                 STARTED = true;
 
-                EditText displayNameText = (EditText) findViewById(R.id.editTextDisplayName);
-                displayName = displayNameText.getText().toString();
+                *//*EditText displayNameText = (EditText) findViewById(R.id.editTextDisplayName);
+                displayName = displayNameText.getText().toString();*//*
 
-                displayNameText.setEnabled(false);
-                btnStart.setEnabled(false);
+                *//*displayNameText.setEnabled(false);
+                btnStart.setEnabled(false);*//*
 
-                TextView text = (TextView) findViewById(R.id.textViewSelectContact);
-                text.setVisibility(View.VISIBLE);
+                *//*TextView text = (TextView) findViewById(R.id.textViewSelectContact);
+                text.setVisibility(View.VISIBLE);*//*
 
-                Button updateButton = (Button) findViewById(R.id.buttonUpdate);
-                updateButton.setVisibility(View.VISIBLE);
+                *//*Button updateButton = (Button) findViewById(R.id.buttonUpdate);
+                updateButton.setVisibility(View.VISIBLE);*//*
 
-                Button callButton = (Button) findViewById(R.id.buttonCall);
-                callButton.setVisibility(View.VISIBLE);
+                *//*Button callButton = (Button) findViewById(R.id.buttonCall);
+                callButton.setVisibility(View.VISIBLE);*//*
 
-                ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
-                scrollView.setVisibility(View.VISIBLE);
+                *//*ScrollView scrollView = (ScrollView) findViewById(R.id.scrollView);
+                scrollView.setVisibility(View.VISIBLE);*//*
 
                 contactManager = new ContactManager(displayName, getBroadcastIp());
-                startCallListener();
+                *//*startCallListener();*//*
             }
-        });
+        });*/
 
         // UPDATE BUTTON
         // Updates the list of reachable devices
-        final Button btnUpdate = (Button) findViewById(R.id.buttonUpdate);
+        /*final Button btnUpdate = (Button) findViewById(R.id.buttonUpdate);
         btnUpdate.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -95,17 +97,17 @@ public class MainActivity2 extends Activity {
 
                 updateContactList();
             }
-        });
+        });*/
 
         // CALL BUTTON
         // Attempts to initiate an audio chat session with the selected device
-        final Button btnCall = (Button) findViewById(R.id.buttonCall);
+        /*final Button btnCall = (Button) findViewById(R.id.buttonCall);*/
         btnCall.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                RadioGroup radioGroup = (RadioGroup) findViewById(R.id.contactList);
+                /*RadioGroup radioGroup = (RadioGroup) findViewById(R.id.contactList);
                 int selectedButton = radioGroup.getCheckedRadioButtonId();
                 if(selectedButton == -1) {
                     // If no device was selected, present an error message to the user
@@ -121,28 +123,28 @@ public class MainActivity2 extends Activity {
                     });
                     alert.show();
                     return;
-                }
+                }*/
                 // Collect details about the selected contact
-                RadioButton radioButton = (RadioButton) findViewById(selectedButton);
+                /*RadioButton radioButton = (RadioButton) findViewById(selectedButton);
                 String contact = radioButton.getText().toString();
-                InetAddress ip = contactManager.getContacts().get(contact);
+                InetAddress ip = contactManager.getContacts().get(contact);*/
                 IN_CALL = true;
 
                 // Send this information to the MakeCallActivity and start that activity
                 Intent intent = new Intent(MainActivity2.this, MakeCallActivity.class);
-                intent.putExtra(EXTRA_CONTACT, contact);
+                /*intent.putExtra(EXTRA_CONTACT, contact);*/
                 //String address = ip.toString();
                 EditText displayIP = (EditText)findViewById(R.id.editTextIP);
                 String address2 = displayIP.getText().toString();
                 //address = address.substring(1, address.length());
                 intent.putExtra(EXTRA_IP, address2);
-                intent.putExtra(EXTRA_DISPLAYNAME, displayName);
+                intent.putExtra(EXTRA_DISPLAYNAME, address2);
                 startActivity(intent);
             }
         });
     }
 
-    private void updateContactList() {
+    /*private void updateContactList() {
         // Create a copy of the HashMap used by the ContactManager
         HashMap<String, InetAddress> contacts = contactManager.getContacts();
         // Create a radio button for each contact in the HashMap
@@ -158,9 +160,9 @@ public class MainActivity2 extends Activity {
         }
 
         radioGroup.clearCheck();
-    }
+    }*/
 
-    private InetAddress getBroadcastIp() {
+    /*private InetAddress getBroadcastIp() {
         // Function to return the broadcast address, based on the IP address of the device
         try {
 
@@ -177,15 +179,15 @@ public class MainActivity2 extends Activity {
             return null;
         }
 
-    }
+    }*/
 
-    private String toBroadcastIp(int ip) {
+    /*private String toBroadcastIp(int ip) {
         // Returns converts an IP address in int format to a formatted string
         return (ip & 0xFF) + "." +
                 ((ip >> 8) & 0xFF) + "." +
                 ((ip >> 16) & 0xFF) + "." +
                 "255";
-    }
+    }*/
 
     private void startCallListener() {
         // Creates the listener thread
@@ -285,7 +287,7 @@ public class MainActivity2 extends Activity {
         Log.i(LOG_TAG, "App restarted!");
         IN_CALL = false;
         STARTED = true;
-        contactManager = new ContactManager(displayName, getBroadcastIp());
+        //contactManager = new ContactManager(displayName, getBroadcastIp());
         startCallListener();
     }
 }

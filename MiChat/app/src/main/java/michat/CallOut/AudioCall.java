@@ -7,12 +7,17 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 public class AudioCall {
 
@@ -30,13 +35,14 @@ public class AudioCall {
 		
 		this.address = address;
 	}
-	
+
+
 	public void startCall() {
-		
+
 		startMic();
 		startSpeakers();
 	}
-	
+
 	public void endCall() {
 		
 		Log.i(LOG_TAG, "Ending call!");
