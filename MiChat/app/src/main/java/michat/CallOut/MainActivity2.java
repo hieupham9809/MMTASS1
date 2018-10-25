@@ -8,10 +8,12 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -25,6 +27,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tuankiet.myapp.R;
 
@@ -53,6 +56,7 @@ public class MainActivity2 extends Activity {
         Button btnCall = (Button) findViewById(R.id.buttonCall);
         btnCall.setVisibility(View.VISIBLE);
         startCallListener();
+        requestRecordAudioPermission();
         // START BUTTON
         // Pressing this buttons initiates the main functionality
         /*final Button btnStart = (Button) findViewById(R.id.buttonStart);
@@ -252,7 +256,22 @@ public class MainActivity2 extends Activity {
         // Ends the listener thread
         LISTEN = false;
     }
+    private void requestRecordAudioPermission() {
 
+        String requiredPermission = Manifest.permission.RECORD_AUDIO;
+
+        // If the user previously denied this permission then show a message explaining why
+        // this permission is needed
+        if (this.checkCallingOrSelfPermission(requiredPermission) == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+
+            Toast.makeText(this, "This app needs to record audio through the microphone....", Toast.LENGTH_SHORT).show();
+            requestPermissions(new String[]{requiredPermission}, 101);
+        }
+
+
+    }
     @Override
     public void onPause() {
 

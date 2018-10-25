@@ -19,7 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import michat.CallOut.MainActivity2;
 import com.example.tuankiet.myapp.R;
 
 public class ReceiveCallActivity extends Activity {
@@ -66,6 +66,7 @@ public class ReceiveCallActivity extends Activity {
 					IN_CALL = true;
 					call = new AudioCall(address);
 					requestRecordAudioPermission();
+
 					//call.startCall();
 					// Hide the buttons as they're not longer required
 					Button accept = (Button) findViewById(R.id.buttonAccept);
@@ -241,7 +242,7 @@ public class ReceiveCallActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		//getMenuInflater().inflate(R.menu.receive_call, menu);
+		getMenuInflater().inflate(R.menu.receive_call, menu);
 		return true;
 	}
 
