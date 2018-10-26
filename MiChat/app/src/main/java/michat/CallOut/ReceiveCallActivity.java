@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.media.MediaPlayer;
 import michat.CallOut.MainActivity2;
 import com.example.tuankiet.myapp.R;
 
@@ -32,6 +33,7 @@ public class ReceiveCallActivity extends Activity {
 	private boolean LISTEN = true;
 	private boolean IN_CALL = false;
 	private AudioCall call;
+	public MediaPlayer mp;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +44,9 @@ public class ReceiveCallActivity extends Activity {
 		Intent intent = getIntent();
 		contactName = intent.getStringExtra(MainActivity2.EXTRA_CONTACT);
 		contactIp = intent.getStringExtra(MainActivity2.EXTRA_IP);
-		
+
+		mp = MediaPlayer.create(getApplicationContext(), R.raw.ringing);
+		mp.start();
 		TextView textView = (TextView) findViewById(R.id.textViewIncomingCall);
 		textView.setText("Incoming call: " + contactName);
 		
@@ -60,14 +64,15 @@ public class ReceiveCallActivity extends Activity {
 				
 				try {
 					// Accepting call. Send a notification and start the call
-					sendMessage("ACC:");
+					mp.stop();
+                    sendMessage("ACC:");
 					InetAddress address = InetAddress.getByName(contactIp);
 					Log.i(LOG_TAG, "Calling " + address.toString());
 					IN_CALL = true;
 					call = new AudioCall(address);
-					requestRecordAudioPermission();
+					//requestRecordAudioPermission();
 
-					//call.startCall();
+					call.startCall();
 					// Hide the buttons as they're not longer required
 					Button accept = (Button) findViewById(R.id.buttonAccept);
 					accept.setEnabled(false);
@@ -242,7 +247,7 @@ public class ReceiveCallActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.receive_call, menu);
+		getMenuInflater().inflate(R.menu.menu_tab, menu);
 		return true;
 	}
 

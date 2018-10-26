@@ -276,13 +276,13 @@ public class MainActivity2 extends Activity {
     public void onPause() {
 
         super.onPause();
-        if(STARTED) {
+        /*if(STARTED) {
 
             contactManager.bye(displayName);
             contactManager.stopBroadcasting();
             contactManager.stopListening();
             //STARTED = false;
-        }
+        }*/
         stopCallListener();
         Log.i(LOG_TAG, "App paused!");
     }
