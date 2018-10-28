@@ -33,7 +33,7 @@ public class ReceiveCallActivity extends Activity {
 	private boolean LISTEN = true;
 	private boolean IN_CALL = false;
 	private AudioCall call;
-	public MediaPlayer mp;
+	public MediaPlayer mpCommingCall;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,8 @@ public class ReceiveCallActivity extends Activity {
 		contactName = intent.getStringExtra(MainActivity2.EXTRA_CONTACT);
 		contactIp = intent.getStringExtra(MainActivity2.EXTRA_IP);
 
-		mp = MediaPlayer.create(getApplicationContext(), R.raw.ringing);
-		mp.start();
+		mpCommingCall = MediaPlayer.create(getApplicationContext(), R.raw.ringing);
+		mpCommingCall.start();
 		TextView textView = (TextView) findViewById(R.id.textViewIncomingCall);
 		textView.setText("Incoming call: " + contactName);
 		
@@ -64,7 +64,7 @@ public class ReceiveCallActivity extends Activity {
 				
 				try {
 					// Accepting call. Send a notification and start the call
-					mp.stop();
+					mpCommingCall.stop();
                     sendMessage("ACC:");
 					InetAddress address = InetAddress.getByName(contactIp);
 					Log.i(LOG_TAG, "Calling " + address.toString());
@@ -100,6 +100,7 @@ public class ReceiveCallActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// Send a reject notification and end the call
+				mpCommingCall.stop();
 				sendMessage("REJ:");
 				endCall();
 			}
