@@ -117,8 +117,7 @@ public class DialogListFragment extends Fragment implements Observerable {
         while (rooms.hasNext()) {
             SugarRoom room = rooms.next();
             ArrayList<IUser> users = new ArrayList<>();
-            ArrayList<String> members=new ArrayList<>();
-            Log.d("MEMBERS",room.getMembers());
+            ArrayList<String> members;
             members=new Gson().fromJson(room.getMembers(),new TypeToken<ArrayList<String>>(){}.getType());
             List<SugarUser> sugarUsers = new ArrayList<SugarUser>() {{
                 add(GlobalData.getInstance().getOwner());
@@ -142,18 +141,15 @@ public class DialogListFragment extends Fragment implements Observerable {
             if (lstMsg.size() > 0) lastMsg = lstMsg.get(0).toMessage();
             long unRead = SugarMessage.count(SugarMessage.class, "READ_AT IS NULL AND ROOM_ID=?", new String[]{String.valueOf(room.getId())});
 
-            SugarUser ownerRoom;
             if(room.isGroup()) {
-                ownerRoom = SugarUser.findByName(members.get(0));
-                diaLst.add(new DialogList(String.valueOf(room.getId()), ownerRoom.getAvatar(), room.getName(), users, lastMsg, (int) unRead));
+                diaLst.add(new DialogList(String.valueOf(room.getId()), "https://cdn4.iconfinder.com/data/icons/business-card-contact/512/Users_Avatar_Team-512.png", room.getName(), users, lastMsg, (int) unRead));
             }
             else{
-                diaLst.add(new DialogList(String.valueOf(room.getId()), GlobalData.getInstance().getOwner().getAvatar(), room.getName(), users, lastMsg, (int) unRead));
+                SugarUser ownerRoom=SugarUser.findByName(members.get(0));
+                diaLst.add(new DialogList(String.valueOf(room.getId()), GlobalData.getInstance().getOwner().getAvatar(), ownerRoom.getDisplayName(), users, lastMsg, (int) unRead));
             }
         }
-
         adapter.addItems(diaLst);
-        //adapter.notifyDataSetChanged();
     }
     public void showDeleteDialog(String id){
         AlertDialog.Builder builder=new AlertDialog.Builder(getContext());

@@ -237,10 +237,5 @@ public class ReceiveCallActivity extends Activity {
 		replyThread.start();
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.menu_tab, menu);
-		return true;
-	}
 
 }

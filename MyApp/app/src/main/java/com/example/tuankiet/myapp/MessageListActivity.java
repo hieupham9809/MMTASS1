@@ -174,7 +174,10 @@ public class MessageListActivity extends AppCompatActivity{
         while(lstMsg.hasNext()){
             SugarMessage msg=lstMsg.next();
             Message mess=msg.toMessage();
-           // SendMessage(msg,null);
+            if(msg.getReadAt()==null){
+                msg.setReadAt(new Date());
+                msg.save();
+            }
             adapter.addToStart(mess,true);
         }
         input.setAttachmentsListener(new MessageInput.AttachmentsListener() {
@@ -194,13 +197,10 @@ public class MessageListActivity extends AppCompatActivity{
             public boolean onSubmit(CharSequence input) {
                 SugarMessage sugarMessage=new SugarMessage();
                 sugarMessage.setText(input.toString());
-                sugarMessage.setImageUrl(null);
                 sugarMessage.setCreatedAt(new Date());
                 sugarMessage.setOwner(GlobalData.getInstance().getOwner().getId());
-                sugarMessage.setReceivedAt(null);
                 sugarMessage.setReadAt(new Date());
                 sugarMessage.setRoomId(sugarRoom.getId());
-                sugarMessage.setStatus(null);
                 sugarMessage.save();
                 adapter.addToStart(sugarMessage.toMessage(),true);
                 SendMessage(sugarMessage,null);
@@ -482,10 +482,6 @@ public class MessageListActivity extends AppCompatActivity{
             }
         }
         else{
-            CharSequence name="Mi Chat";
-            String description="Mo ta";
-            int importance= NotificationManager.IMPORTANCE_DEFAULT;
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 notificationManager=getSystemService(NotificationManager.class);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constant.CHANNEL_ID);
@@ -497,42 +493,6 @@ public class MessageListActivity extends AppCompatActivity{
             }
 
         }
-
-//        String owner=message.getUser().getName();
-//        boolean push=false;
-//        for(SugarUser i : ownerRoom){
-//            if(i.getName().equals(owner))
-//            {
-//                push=true;
-//                break;
-//            }
-//        }
-//        if(push)
-//        {
-//            if(!adapter.update(message)) {
-//                msg.setReadAt(new Date());
-//                adapter.addToStart(message, true);
-//                adapter.notifyDataSetChanged();
-//            }
-//        }
-//        else{
-//            //connect server get ip
-//            CharSequence name="Mi Chat";
-//            String description="Mo ta";
-//            int importance= NotificationManager.IMPORTANCE_DEFAULT;
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//                notificationManager=getSystemService(NotificationManager.class);
-//                NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constant.CHANNEL_ID);
-//                builder.setSmallIcon(R.drawable.ic_messenger);
-//                builder.setContentTitle("Mi Chat");
-//                builder.setContentText(message.getUser().getName() + ":" + message.getText());
-//                builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//                notificationManager.notify(Integer.parseInt(message.getUser().getId()),builder.build());
-//            }
-//
-//
-//        }
-
 }
     BroadcastReceiver receiver = new BroadcastReceiver() {
 

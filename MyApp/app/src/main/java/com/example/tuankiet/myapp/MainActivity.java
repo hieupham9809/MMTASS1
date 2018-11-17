@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     EditText _passwordText;
     TextView _loginLink;
     TextView _signupLink;
-    Button _loginButton;
+    TextView _loginButton;
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -41,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
         db.onCreate(db.getDB());
         _emailText=findViewById(R.id.input_email);
         _passwordText=findViewById(R.id.input_password);
-        _loginLink=findViewById(R.id.link_signup);
-        _signupLink=findViewById(R.id.link_signup);
         _loginButton=findViewById(R.id.btn_login);
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -52,18 +50,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        _signupLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Start the Signup activity
-                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
-            }
-        });
+//        _signupLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                // Start the Signup activity
+//                Intent intent = new Intent(getApplicationContext(), SignupActivity.class);
+//                startActivityForResult(intent, REQUEST_SIGNUP);
+//            }
+//        });
     }
 
     public void login() {
-        Log.d(TAG, "Login");
 
         if (!validate()) {
             onLoginFailed();
@@ -138,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-
         _loginButton.setEnabled(true);
     }
 
