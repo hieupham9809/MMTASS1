@@ -18,16 +18,30 @@
         android:text="calling"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <!--<LinearLayout-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_width="0dp">-->
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="348dp"
+        android:layout_height="314dp"
+        android:src="@drawable/default_avatar"
+        android:orientation="horizontal"/>
+    <!--</LinearLayout>-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonEndCall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/endcall"
             android:text="end call" />
 
     </LinearLayout>
