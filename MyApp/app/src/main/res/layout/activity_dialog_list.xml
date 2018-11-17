@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--tools:context=".DialogListActivity"-->
+
+    <FrameLayout
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.stfalcon.chatkit.dialogs.DialogsList
+        android:id="@+id/dialogsList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:dialogDividerLeftPadding="0dp"
+        app:dialogMessageTextSize="17sp"
+        app:dialogTitleTextStyle="bold"
+        app:dialogUnreadBubbleBackgroundColor="#ff0000"
+        app:dialogUnreadItemBackground="#9A000000"
+        app:dialogUnreadTitleTextStyle="bold"/>
+    <!--   <android.support.design.widget.BottomNavigationView
+           android:id="@+id/navigation"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_alignParentBottom="true"
+           android:background="?android:attr/windowBackground"
+           android:foreground="?attr/selectableItemBackground"
+           app:itemBackground="@color/bgBottomNavigation"
+           app:itemIconTint="@android:color/white"
+           app:itemTextColor="@android:color/white"
+           app:menu="@menu/navigation" />
+           -->
+</RelativeLayout>

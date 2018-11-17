@@ -1,0 +1,141 @@
+package com.example.tuankiet.myapp;
+
+import android.content.IntentFilter;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
+import com.orm.SugarDb;
+import com.stfalcon.chatkit.dialogs.DialogsList;
+import com.stfalcon.chatkit.dialogs.DialogsListAdapter;
+
+public class DialogListActivity extends AppCompatActivity {
+
+    private IntentFilter mIntentFilter;
+    DialogsList dialogList;
+    DialogsListAdapter adapter;
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_dialog_list);
+        SugarDb db = new SugarDb(this);
+        db.onCreate(db.getDB());
+    }
+
+//        mIntentFilter=new IntentFilter(MESSAGE_CONSTANT.RECEIVE_MSG);
+//        callService();
+//
+//        //setting dialog list
+//        dialogList = findViewById(R.id.dialogsList);
+//        adapter = new DialogsListAdapter<>(new ImageLoader() {
+//            @Override
+//            public void loadImage(ImageView imageView, String url) {
+//                Picasso.get().load(url).into(imageView);
+//            }
+//        });
+//        dialogList.setAdapter(adapter);
+//        //
+//
+//        renderDialog();
+//        //Load Database
+//
+//
+//    }
+//        private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//
+//                if (intent.getAction().equals(MESSAGE_CONSTANT.RECEIVE_MSG)) {
+//                    renderDialog();
+//                }
+//            }
+//        };
+//
+//    void callService(){
+//        mIntentFilter=new IntentFilter();
+//        Intent serviceIntent=new Intent(DialogListActivity.this,MainService.class);
+//        startService(serviceIntent);
+//    }
+//    void renderDialog(){
+//
+//        List<User> usrLst = new ArrayList<>();
+//        for(SugarUser i :SugarUser.listAll(SugarUser.class)) usrLst.add(i.toUser());
+//        List<IDialog> diaLst = new ArrayList<>();
+//
+//        for (User i : usrLst) {
+//            if (!i.getRole().equals("owner")) {
+//                mdh.setTableName(i.getName());
+//
+//                Message lastMsg = mdh.getLastMessage();
+//                int unRead = mdh.getUnreadMessage().size();
+//                ArrayList<IUser> users = new ArrayList<>();
+//                for (String username : mdh.getAllFriendsChatWith()) {
+//                    users.add(udh.getUser(username));
+//                }
+//
+//                diaLst.add(new DialogList(i.getName(), i.getAvatar(), i.getFullName(), users, lastMsg, unRead));
+//            }
+//        }
+//        adapter.addItems(diaLst);
+//        adapter.setOnDialogClickListener(new DialogsListAdapter.OnDialogClickListener() {
+//            @Override
+//            public void onDialogClick(IDialog dialog) {
+//                Intent serviceIntent=new Intent(DialogListActivity.this,MainService.class);
+//                User friend=udh.getUserWithId(dialog.getId());
+//                serviceIntent.setAction(MESSAGE_CONSTANT.SEND_CONNECT);
+//                serviceIntent.putExtra("connect",friend.getName());
+//                startService(serviceIntent);
+//                Intent intent=new Intent(DialogListActivity.this,MessageListActivity.class);
+//                intent.putExtra("ownerId", GlobalData.getInstance().getOwner().getName());
+//                intent.putExtra("friendId",dialog.getId());
+//                startActivity(intent);
+//            }
+//        });
+//    }
+//    @Override
+//    protected void onPause(){
+//        unregisterReceiver(mReceiver);
+//        super.onPause();
+//    }
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        registerReceiver(mReceiver,mIntentFilter);
+//    }
+}
+/*
+toolbar = getSupportActionBar();
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        toolbar.setTitle("Shop");
+        private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            switch (item.getItemId()) {
+                case R.id.navigation_shop:
+                    toolbar.setTitle("Shop");
+                    return true;
+                case R.id.navigation_gifts:
+                    toolbar.setTitle("My Gifts");
+                    return true;
+                case R.id.navigation_cart:
+                    toolbar.setTitle("Cart");
+                    return true;
+                case R.id.navigation_profile:
+                    toolbar.setTitle("Profile");
+                    return true;
+            }
+            return false;
+        }
+    };
+}
+ */
