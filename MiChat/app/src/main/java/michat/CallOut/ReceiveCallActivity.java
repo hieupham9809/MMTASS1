@@ -100,7 +100,7 @@ public class ReceiveCallActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// Send a reject notification and end the call
-				mpCommingCall.stop();
+				//mpCommingCall.stop();
 				sendMessage("REJ:");
 				endCall();
 			}
@@ -149,6 +149,7 @@ public class ReceiveCallActivity extends Activity {
 			call.endCall();
 		}
 		sendMessage("END:");
+		mpCommingCall.stop();////////////////////////////////////////////////////////////
 		finish();
 	}
 	
