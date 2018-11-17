@@ -1,0 +1,13 @@
+#Fri Nov 16 17:03:23 ICT 2018
+path.3=classes.dex
+path.2=classes.dex
+path.1=classes.dex
+path.0=classes.dex
+renamed.3=classes4.dex
+renamed.2=classes3.dex
+renamed.1=classes2.dex
+renamed.0=classes.dex
+base.3=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\234
+base.2=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\236
+base.1=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\233
+base.0=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\235

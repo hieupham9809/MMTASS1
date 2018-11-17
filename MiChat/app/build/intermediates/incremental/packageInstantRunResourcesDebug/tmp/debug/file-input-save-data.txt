@@ -1,0 +1,7 @@
+#Internal package file, do not edit.
+#Thu Nov 15 23:13:59 ICT 2018
+0.baseType=DIRECTORY
+0.base=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\assets\\debug
+0.path=chat
+0.set=ASSET
+count=1

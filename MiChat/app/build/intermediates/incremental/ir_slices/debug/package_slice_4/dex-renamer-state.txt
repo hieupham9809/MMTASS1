@@ -1,0 +1,4 @@
+#Fri Nov 16 17:03:21 ICT 2018
+base.0=D\:\\HOC\\MMT\\ASSGNT\\ASSGNM1\\MiChat\\app\\build\\intermediates\\transforms\\dexMerger\\debug\\226
+path.0=classes.dex
+renamed.0=classes.dex
