@@ -55,7 +55,8 @@ public class DialogListFragment extends Fragment implements Observerable {
     DialogsList dialogList;
     DialogsListAdapter adapter;
     List<IDialog> diaLst;
-
+    ArrayList<String> members;
+    ArrayList<IUser> users = new ArrayList<>();
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +64,7 @@ public class DialogListFragment extends Fragment implements Observerable {
         adapter = new DialogsListAdapter<>(new ImageLoader() {
             @Override
             public void loadImage(ImageView imageView, String url) {
-                Picasso.get().load(url).into(imageView);
                 Transformation transformation = new CircleTransform();
-
                 Picasso.get().load(url)
                         .fit()
                         .transform(transformation)
@@ -111,13 +110,14 @@ public class DialogListFragment extends Fragment implements Observerable {
         Activity v = getActivity();
         dialogList = v.findViewById(R.id.dialogsList);
         dialogList.setAdapter(adapter);
+
         adapter.clear();
         diaLst.clear();
         Iterator<SugarRoom> rooms = SugarRoom.findAll(SugarRoom.class);
         while (rooms.hasNext()) {
             SugarRoom room = rooms.next();
-            ArrayList<IUser> users = new ArrayList<>();
-            ArrayList<String> members;
+
+
             members=new Gson().fromJson(room.getMembers(),new TypeToken<ArrayList<String>>(){}.getType());
             List<SugarUser> sugarUsers = new ArrayList<SugarUser>() {{
                 add(GlobalData.getInstance().getOwner());
@@ -200,6 +200,40 @@ public class DialogListFragment extends Fragment implements Observerable {
 
     }
 
+    BroadcastReceiver receiver1 = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.getAction().equals("onCreate")){
+                SugarRoom room=SugarRoom.findById(SugarRoom.class,intent.getLongExtra("id",-1));
+                ArrayList<String> member = new Gson().fromJson(room.getMembers(), new TypeToken<ArrayList<String>>() {
+                }.getType());
+                ArrayList<SugarUser> sugarUserList=new ArrayList<>();
+                ArrayList<IUser> usrList=new ArrayList<>();
+                List<SugarUser> sugarUsers = new ArrayList<SugarUser>() {{
+                    add(GlobalData.getInstance().getOwner());
+                }};
+                for(String i:member){
+                    SugarUser sugarUser=SugarUser.findByName(i);
+                    if(sugarUser==null) {
+                        sugarUser=SugarUser.loadUser(i);
+                        if(sugarUser!=null) sugarUser.save();
+                    }
+                    if(sugarUser==null){
+                        Toast.makeText(getContext(),"Members not exist "+i,Toast.LENGTH_SHORT).show();
+                        continue;
+                    }
+                    sugarUserList.add(sugarUser);
+                }
+                for (SugarUser i : sugarUserList) if(i!=null) usrList.add(i.toUser());
+
+                DialogList lst=new DialogList(String.valueOf(room.getId()), "https://cdn4.iconfinder.com/data/icons/business-card-contact/512/Users_Avatar_Team-512.png", room.getName(), usrList, null, 0);
+                if(adapter.getItemById(String.valueOf(room.getId()))==null)
+                adapter.addItem(lst);
+            }
+        }
+    };
     BroadcastReceiver receiver = new BroadcastReceiver() {
 
         @Override
@@ -210,27 +244,32 @@ public class DialogListFragment extends Fragment implements Observerable {
         }
     };
     IntentFilter intentFilter=new IntentFilter("onMsg");
+    IntentFilter intentFilter1=new IntentFilter("onCreate");
     @Override
     public void onStart() {
         super.onStart();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver,intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver1,intentFilter1);
     }
 
     @Override
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver1);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver,intentFilter);
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver1,intentFilter1);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver1);
     }
 }

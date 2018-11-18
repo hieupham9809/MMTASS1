@@ -545,7 +545,7 @@ public class MessageListActivity extends AppCompatActivity{
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 notificationManager=getSystemService(NotificationManager.class);
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(this, Constant.CHANNEL_ID);
-                builder.setSmallIcon(R.drawable.ic_messenger);
+                builder.setSmallIcon(R.drawable.ic_michat);
                 builder.setContentTitle("Mi Chat");
                 builder.setContentText(message.getUser().getName() + ":" + message.getText());
                 builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
