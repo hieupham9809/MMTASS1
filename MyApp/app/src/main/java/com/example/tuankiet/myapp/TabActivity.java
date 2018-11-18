@@ -1,13 +1,19 @@
 package com.example.tuankiet.myapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -20,15 +26,30 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.tuankiet.myapp.chatorm.SugarRoom;
+import com.example.tuankiet.myapp.chatorm.SugarUser;
 import com.example.tuankiet.myapp.fragment.AddGroupFragment;
+import com.example.tuankiet.myapp.fragment.CircleTransform;
 import com.example.tuankiet.myapp.fragment.DialogListFragment;
 import com.example.tuankiet.myapp.fragment.FriendListFragment;
-import com.example.tuankiet.myapp.fragment.MyFragment;
+import com.example.tuankiet.myapp.voicecall.ReceiveCallActivity;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
+
+import java.util.ArrayList;
+
+import michat.GlobalData;
+
+import static com.example.tuankiet.myapp.MessageListActivity.EXTRA_CONTACT;
 
 public class TabActivity extends AppCompatActivity {
 
@@ -42,12 +63,52 @@ public class TabActivity extends AppCompatActivity {
     private PagerAdapter adapter;
     private ViewPager mViewPager;
     private TabLayout tabLayout;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle drawerToggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
         addControl();
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.activity_tab_drawer);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(drawerToggle);
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);
+        ImageView imageView=findViewById(R.id.user_avatar);
+        Transformation transformation = new CircleTransform();
+        Picasso.get().load(GlobalData.getInstance().getOwner().getAvatar())
+                .fit()
+                .transform(transformation)
+                .into(imageView);
+        TextView userDisplay=findViewById(R.id.user_display_name);
+        userDisplay.setText(GlobalData.getInstance().getOwner().getDisplayName());
+        TextView email=findViewById(R.id.email);
+        email.setText(GlobalData.getInstance().getOwner().getName()+"@gmail.com");
+        ImageView logout=findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(TabActivity.this,MainActivity.class);
+                SugarUser.findOwner().delete();
+                startActivity(intent);
+            }
+        });
+    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void addControl(){
@@ -88,6 +149,7 @@ public class TabActivity extends AppCompatActivity {
 
             }
         });
+        mViewPager.setOffscreenPageLimit(3);
         tabLayout=findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
     }
@@ -110,8 +172,13 @@ public class TabActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-       return super.onOptionsItemSelected(item);
+        if(drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        switch (item.getItemId()) {
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -144,5 +211,43 @@ public class TabActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return tabs[position];
         }
+    }
+    public final static String EXTRA_CONTACT = "michat.CallOut.CONTACT";
+    public final static String EXTRA_IP = "michat.CallOut.IP";
+    BroadcastReceiver receiverCall = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(intent.getAction().equals("onCall")){
+                Intent mintent = new Intent(TabActivity.this, ReceiveCallActivity.class);
+                mintent.putExtra(EXTRA_CONTACT, intent.getStringExtra(EXTRA_CONTACT));
+                mintent.putExtra(EXTRA_IP, intent.getStringExtra(EXTRA_IP));
+                startActivity(mintent);
+            }
+        }
+    };
+    IntentFilter filterCall=new IntentFilter("onCall");
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverCall,filterCall);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCall);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverCall,filterCall);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCall);
     }
 }

@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -7,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="michat.CallOut.MakeCallActivity" >
+    tools:context="com.example.tuankiet.myapp.voicecall.MakeCallActivity" >
 
     <TextView
         android:id="@+id/textViewCalling"
@@ -17,16 +18,30 @@
         android:text="calling"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <!--<LinearLayout-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_width="0dp">-->
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="348dp"
+        android:layout_height="314dp"
+        android:src="@drawable/default_avatar"
+        android:orientation="horizontal"/>
+    <!--</LinearLayout>-->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:gravity="center_horizontal" >
+        android:gravity="center_horizontal">
 
-        <Button
+        <ImageButton
             android:id="@+id/buttonEndCall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/endcall"
             android:text="end call" />
 
     </LinearLayout>

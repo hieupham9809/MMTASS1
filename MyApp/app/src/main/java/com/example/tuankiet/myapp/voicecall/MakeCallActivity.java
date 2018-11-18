@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.tuankiet.myapp.R;
@@ -31,7 +32,8 @@ public class MakeCallActivity extends Activity {
 	private boolean LISTEN = true;
 	private boolean IN_CALL = false;
 	private AudioCall call;
-	
+	private String username;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -44,14 +46,15 @@ public class MakeCallActivity extends Activity {
 		/*displayName = intent.getStringExtra(MainActivity2.EXTRA_DISPLAYNAME);
 		contactName = intent.getStringExtra(MainActivity2.EXTRA_CONTACT);*/
 		contactIp = intent.getStringExtra(MainActivity2.EXTRA_IP);
-		
+		username=intent.getStringExtra("USERNAME");
+		displayName=intent.getStringExtra(MainActivity2.EXTRA_DISPLAYNAME);
 		TextView textView = (TextView) findViewById(R.id.textViewCalling);
-		textView.setText("Calling: " + contactIp);
+		textView.setText("Calling: " + displayName);
 		
 		startListener();
 		makeCall();
 		
-		Button endButton = (Button) findViewById(R.id.buttonEndCall);
+		ImageButton endButton = (ImageButton) findViewById(R.id.buttonEndCall);
 		endButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -64,7 +67,7 @@ public class MakeCallActivity extends Activity {
 	
 	private void makeCall() {
 		// Send a request to start a call
-		sendMessage("CAL:"+contactIp, 50003);
+		sendMessage("CAL:"+username, 50003);
 	}
 	
 	private void endCall() {

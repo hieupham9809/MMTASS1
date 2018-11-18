@@ -4,15 +4,19 @@ import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tuankiet.myapp.HttpRequest.ISugarUser;
+import com.example.tuankiet.myapp.HttpRequest.UserToken;
 import com.example.tuankiet.myapp.chatorm.SugarMessage;
 import com.example.tuankiet.myapp.chatorm.SugarRoom;
 import com.example.tuankiet.myapp.chatorm.SugarUser;
@@ -20,15 +24,21 @@ import com.example.tuankiet.myapp.service.MainService;
 import com.orm.SugarContext;
 import com.orm.SugarDb;
 
+import java.io.IOException;
+
 import michat.GlobalData;
 import michat.model.MESSAGE_CONSTANT;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
     EditText _emailText;
     EditText _passwordText;
-    TextView _loginLink;
-    TextView _signupLink;
-    TextView _loginButton;
+    Button _loginButton;
+    ProgressBar progressBar;
 
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
@@ -42,11 +52,23 @@ public class MainActivity extends AppCompatActivity {
         _emailText=findViewById(R.id.input_email);
         _passwordText=findViewById(R.id.input_password);
         _loginButton=findViewById(R.id.btn_login);
+        progressBar=findViewById(R.id.progressbar);
+        progressBar.setVisibility(View.INVISIBLE);
+        SugarUser usr = SugarUser.findOwner();
+        if(usr!=null){
+            GlobalData.getInstance().setOwner(usr);
+            login(usr.getName()+"@gmail.com",usr.getPassword(),true);
+            return;
+        }
+
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                login();
+
+                String email = _emailText.getText().toString();
+                String password = _passwordText.getText().toString();
+                login(email,password,false);
             }
         });
 
@@ -60,50 +82,56 @@ public class MainActivity extends AppCompatActivity {
 //        });
     }
 
-    public void login() {
+    public void login(String email,String password,boolean auto) {
 
-        if (!validate()) {
+        if (!auto&&!validate()) {
             onLoginFailed();
             return;
         }
 
-        _loginButton.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
-                R.style.AppTheme_Dark_Dialog);
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
 
-        SugarContext.init(getApplicationContext());
-        boolean login=true;
-        login=SugarUser.LoginUser(email,password);
         int acong=email.indexOf('@');
         String name=email.substring(0,acong);
-        if(login) {
-            SugarUser usr = SugarUser.findByName(name);
-            if (usr == null || !usr.getRole().equals("owner")) {
-                SugarMessage.deleteAll(SugarMessage.class);
-                SugarRoom.deleteAll(SugarRoom.class);
-                SugarUser.deleteAll(SugarUser.class);
-                usr = SugarUser.loadOwner();
-                usr.setRole("owner");
-                usr.save();
-                Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
+        SugarContext.init(getApplicationContext());
+        progressBar.setVisibility(View.VISIBLE);
+        _loginButton.setEnabled(false);
+        progressBar.setVisibility(View.VISIBLE);
+        SugarUser.LoginUser(email, password, new Callback<UserToken>() {
+            @Override
+            public void onResponse(Call<UserToken> call, Response<UserToken> response) {
+                if(response.body()==null){
+                    onLoginFailed();
+                    return;
+                }
+                SugarUser usr;
+                SugarUser.TOKEN=response.body().getToken();
+                if(!auto) {
+                    SugarMessage.deleteAll(SugarMessage.class);
+                    SugarRoom.deleteAll(SugarRoom.class);
+                    SugarUser.deleteAll(SugarUser.class);
+                    usr = SugarUser.loadUser(name);
+                    usr.setRole("owner");
+                    usr.setPassword(password);
+                    usr.save();
+                    GlobalData.getInstance().setOwner(usr);
+                }
+                Intent serviceIntent = new Intent(MainActivity.this, MainService.class);
+                serviceIntent.setAction(MESSAGE_CONSTANT.SEND_INIT_SESSION);
+                startService(serviceIntent);
+                Constant.ip = Constant.getIP(getApplicationContext());
+                requestRecordAudioPermission();
+                onLoginSuccess();;
             }
-            GlobalData.getInstance().setOwner(usr);
-            Intent serviceIntent = new Intent(MainActivity.this, MainService.class);
-            serviceIntent.setAction(MESSAGE_CONSTANT.SEND_INIT_SESSION);
-            startService(serviceIntent);
-            Constant.ip = Constant.getIP(getApplicationContext());
-            requestRecordAudioPermission();
-            onLoginSuccess();;
 
-        }
-        else {
-            onLoginFailed();
-        }
+            @Override
+            public void onFailure(Call<UserToken> call, Throwable t) {
+                progressBar.setVisibility(View.INVISIBLE);
+                _loginButton.setEnabled(true);
+                onLoginFailed();
+            }
+        });
 
     }
 

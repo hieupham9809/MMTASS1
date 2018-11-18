@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tuankiet.myapp.MainActivity;
 import com.example.tuankiet.myapp.R;
 import com.example.tuankiet.myapp.UserAdapter;
 import com.example.tuankiet.myapp.chatorm.SugarUser;
@@ -62,7 +63,22 @@ public class MyListAdapter extends BaseAdapter {
         UserAdapter country = this.listData.get(position);
         holder.countryNameView.setText(country.getDisplayName());
         holder.populationView.setText(country.getStatus());
-        Picasso.get().load(country.getAvatar()).into(holder.flagView);
+        if(country.getStatus().equals("Online"))
+            holder.populationView.setTextColor(context.getResources().getColor(R.color.green));
+        else holder.populationView.setTextColor(context.getResources().getColor(R.color.black));
+
+        Picasso.get().load(country.getAvatar()).into(holder.flagView,new com.squareup.picasso.Callback() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onError(Exception e) {
+
+            }
+
+        });
+        //Picasso.get().load(country.getAvatar()).into(holder.flagView);
 
         return convertView;
     }

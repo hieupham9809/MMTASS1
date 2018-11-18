@@ -19,13 +19,11 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -41,7 +39,6 @@ import com.example.tuankiet.myapp.service.ComingMessage;
 import com.example.tuankiet.myapp.service.ThreadAccept;
 import com.example.tuankiet.myapp.voicecall.MakeCallActivity;
 import com.example.tuankiet.myapp.voicecall.ReceiveCallActivity;
-import com.fasterxml.jackson.databind.type.ArrayType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
@@ -59,14 +56,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import michat.GlobalData;
 import michat.model.Message;
-import michat.model.User;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,6 +75,7 @@ public class MessageListActivity extends AppCompatActivity{
     MessageInput input;
     MessagesList msgList;
     private Uri imageUri;
+    
     public final static String EXTRA_CONTACT = "michat.CallOut.CONTACT";
     public final static String EXTRA_IP = "michat.CallOut.IP";
     public final static String EXTRA_DISPLAYNAME = "michat.CallOut.DISPLAYNAME";
@@ -90,7 +86,126 @@ public class MessageListActivity extends AppCompatActivity{
     ArrayList<String> members;
     private TrimAdapter trimAdapter;
     private List<SugarMessage> trimData;
+    private ListView trim;
 
+    private void initDrawerLayout(){
+        
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(drawerToggle);
+    }
+    private void initAdapter(){
+        adapter=new MessagesListAdapter<>(String.valueOf(GlobalData.getInstance().getOwner().getId()), new ImageLoader() {
+            @Override
+            public void loadImage(ImageView imageView, String url) {
+                Picasso.get().load(url).into(imageView);
+
+            }
+        });
+        adapter.setOnMessageClickListener(new MessagesListAdapter.OnMessageClickListener<Message>() {
+            @Override
+            public void onMessageClick(Message message) {
+
+            }
+        });
+        adapter.setOnMessageLongClickListener(new MessagesListAdapter.OnMessageLongClickListener<Message>() {
+            @Override
+            public void onMessageLongClick(Message message) {
+                showDeleteDialog(message.getId());
+            }
+        });
+    }
+    void initActionBar(){
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+        if(sugarRoom.isGroup())
+        actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>"+sugarRoom.getName()+"</font>"));
+        else actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>"+SugarUser.findByName(members.get(0)).getDisplayName()));
+    }
+    void loadMessage(){
+        msgList.setAdapter(adapter);
+        Iterator<SugarMessage> lstMsg=SugarMessage.findAsIterator(SugarMessage.class,"ROOM_ID=?",String.valueOf(sugarRoom.getId()));
+        while(lstMsg.hasNext()){
+            SugarMessage msg=lstMsg.next();
+            Message mess=msg.toMessage();
+            if(msg.getReadAt()==null){
+                msg.setReadAt(new Date());
+                msg.save();
+            }
+            adapter.addToStart(mess,true);
+        }
+        input.setAttachmentsListener(new MessageInput.AttachmentsListener() {
+            @Override
+            public void onAddAttachments() {
+                Intent chooseFile;
+                Intent intent;
+                chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+                chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+                chooseFile.setType("*/*");
+                intent = Intent.createChooser(chooseFile, "Choose a file");
+                startActivityForResult(intent, 123);
+            }
+        });
+        input.setInputListener(new MessageInput.InputListener() {
+            @Override
+            public boolean onSubmit(CharSequence input) {
+                SugarMessage sugarMessage=new SugarMessage();
+                sugarMessage.setText(input.toString());
+                sugarMessage.setCreatedAt(new Date());
+                sugarMessage.setOwner(GlobalData.getInstance().getOwner().getId());
+                sugarMessage.setReadAt(new Date());
+                sugarMessage.setRoomId(sugarRoom.getId());
+                sugarMessage.save();
+                adapter.addToStart(sugarMessage.toMessage(),true);
+                SendMessage(sugarMessage,null);
+                return true;
+            }
+
+        });
+    }
+    void initComponent(){
+        drawerLayout = findViewById(R.id.activity_tab_drawer);
+        input=findViewById(R.id.input);
+        msgList=findViewById(R.id.messagesList);
+        CircleImageView imageView=findViewById(R.id.avatar_user);
+        listView = findViewById(R.id.listView);
+        trim=findViewById(R.id.trimMessage);
+        if(members.size()==1)
+            Picasso.get().load(SugarUser.findByName(members.get(0)).getAvatar()).into(imageView);
+        else Picasso.get().load(GlobalData.getInstance().getOwner().getAvatar()).into(imageView);
+    }
+    void initTrimListView(){
+        
+        trimData=SugarMessage.getTrimMessage(sugarRoom.getId());
+        trimAdapter=new TrimAdapter(this,trimData);
+        trim.setAdapter(trimAdapter);
+    }
+    void initGroupListView(){
+        users=new ArrayList<>();
+        for(String i:members){
+            users.add(SugarUser.findByName(i).toUserAdapter());
+        }
+        listadapter = new GroupAdapter(this, users);
+        listView.setAdapter(listadapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                UserAdapter usr=(UserAdapter)parent.getItemAtPosition(position);
+                showDeleteDialog(usr);
+                return false;
+            }
+        });
+        ImageView imageView1=findViewById(R.id.add);
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!sugarRoom.isGroup()) return;
+                Intent intent1=new Intent(MessageListActivity.this,AddGroupActivity.class);
+                intent1.putExtra("roomId",sugarRoom.getId());
+                startActivity(intent1);
+            }
+        });
+    }
     public void showDeleteDialog(String id){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setTitle("Warning!");
@@ -132,113 +247,20 @@ public class MessageListActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message_list);
-        drawerLayout = (DrawerLayout) findViewById(R.id.activity_main_drawer);
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(drawerToggle);
+        
         Intent intent=getIntent();;
         sugarRoom=SugarRoom.findById(SugarRoom.class,Integer.parseInt(intent.getStringExtra("roomId")));
         members=new Gson().fromJson(sugarRoom.getMembers(),new TypeToken<ArrayList<String>>(){}.getType());
         for(String i: members)
             ownerRoom.add(SugarUser.findByName(i));
-        CircleImageView imageView=findViewById(R.id.avatar_user);
-        if(members.size()==1)
-            Picasso.get().load(SugarUser.findByName(members.get(0)).getAvatar()).into(imageView);
-        else Picasso.get().load(GlobalData.getInstance().getOwner().getAvatar()).into(imageView);
-        input=findViewById(R.id.input);
-        msgList=findViewById(R.id.messagesList);
-        ActionBar actionBar=getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setTitle(Html.fromHtml("<font color='#ffffff'>"+sugarRoom.getName()+"</font>"));
-        adapter=new MessagesListAdapter<>(String.valueOf(GlobalData.getInstance().getOwner().getId()), new ImageLoader() {
-            @Override
-            public void loadImage(ImageView imageView, String url) {
-                Picasso.get().load(url).into(imageView);
-
-            }
-        });
-        adapter.setOnMessageClickListener(new MessagesListAdapter.OnMessageClickListener<Message>() {
-            @Override
-            public void onMessageClick(Message message) {
-
-            }
-        });
-        adapter.setOnMessageLongClickListener(new MessagesListAdapter.OnMessageLongClickListener<Message>() {
-            @Override
-            public void onMessageLongClick(Message message) {
-                showDeleteDialog(message.getId());
-            }
-        });
-        msgList.setAdapter(adapter);
-        Iterator<SugarMessage> lstMsg=SugarMessage.findAsIterator(SugarMessage.class,"ROOM_ID=?",String.valueOf(sugarRoom.getId()));
-        while(lstMsg.hasNext()){
-            SugarMessage msg=lstMsg.next();
-            Message mess=msg.toMessage();
-            if(msg.getReadAt()==null){
-                msg.setReadAt(new Date());
-                msg.save();
-            }
-            adapter.addToStart(mess,true);
-        }
-        input.setAttachmentsListener(new MessageInput.AttachmentsListener() {
-            @Override
-            public void onAddAttachments() {
-                Intent chooseFile;
-                Intent intent;
-                chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                chooseFile.setType("file/*");
-                intent = Intent.createChooser(chooseFile, "Choose a file");
-                startActivityForResult(intent, 123);
-            }
-        });
-        input.setInputListener(new MessageInput.InputListener() {
-            @Override
-            public boolean onSubmit(CharSequence input) {
-                SugarMessage sugarMessage=new SugarMessage();
-                sugarMessage.setText(input.toString());
-                sugarMessage.setCreatedAt(new Date());
-                sugarMessage.setOwner(GlobalData.getInstance().getOwner().getId());
-                sugarMessage.setReadAt(new Date());
-                sugarMessage.setRoomId(sugarRoom.getId());
-                sugarMessage.save();
-                adapter.addToStart(sugarMessage.toMessage(),true);
-                SendMessage(sugarMessage,null);
-                return true;
-            }
-
-        });
+        initComponent();
+        initDrawerLayout();
+        initActionBar();
+        initAdapter();
+        loadMessage();
+        initTrimListView();
+        initGroupListView();
         /////////////
-        ListView trim=findViewById(R.id.trimMessage);
-        trimData=SugarMessage.getTrimMessage(sugarRoom.getId());
-        trimAdapter=new TrimAdapter(this,trimData);
-        trim.setAdapter(trimAdapter);
-
-        listView = findViewById(R.id.listView);
-        users=new ArrayList<>();
-        for(String i:members){
-            users.add(SugarUser.findByName(i).toUserAdapter());
-        }
-        listadapter = new GroupAdapter(this, users);
-        listView.setAdapter(listadapter);
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                UserAdapter usr=(UserAdapter)parent.getItemAtPosition(position);
-                showDeleteDialog(usr);
-                return false;
-            }
-        });
-        ImageView imageView1=findViewById(R.id.add);
-        imageView1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!sugarRoom.isGroup()) return;
-                Intent intent1=new Intent(MessageListActivity.this,AddGroupActivity.class);
-                intent1.putExtra("roomId",sugarRoom.getId());
-                startActivity(intent1);
-            }
-        });
     }
     GroupAdapter listadapter;
     public void showDeleteDialog(UserAdapter userAdapter){
@@ -415,7 +437,7 @@ public class MessageListActivity extends AppCompatActivity{
                         SugarMessage sugarMessage=new SugarMessage(null,GlobalData.getInstance().getOwner().getId(),sugarRoom.getId(),new Date(),null,new Date(),null);
                         if(isImage) sugarMessage.setImageUrl(imageUri.toString());
                         else
-                        sugarMessage.setText(imageUri.toString());
+                        sugarMessage.setText(imageUri.getPath());
                         sugarMessage.save();
                         Message mess=sugarMessage.toMessage();
                         adapter.addToStart(mess,true);
@@ -454,15 +476,53 @@ public class MessageListActivity extends AppCompatActivity{
                 return true;
             case R.id.call:
                 //adding init request
+                SugarUser sugarUser=ownerRoom.get(0);
+                ThreadAccept accept = null;
+                if ((accept = Clients.getInstance().getClient(sugarUser.getName())) == null) {
+                    String ip1 = Clients.getInstance().getThreadServer().sendGetUser(sugarUser.getName());
+                    if(ip1==null){
+                        Toast.makeText(this,"User "+sugarUser.getName()+" not online",Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    String[] ip=ip1.split("/");
+                    Socket socket = null;
+                    try {
+                        socket = new Socket(InetAddress.getByName(ip[0]), 3000);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this,"IP not found",Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    accept = new ThreadAccept(socket,getApplicationContext());
+                    Clients.getInstance().add(accept, sugarUser.getName());
+                    BufferedWriter bw= null;
+                    try {
+                        bw = new BufferedWriter(new OutputStreamWriter(accept.getOutputStream()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this,"Can't create new socket",Toast.LENGTH_SHORT).show();
+                    }
+                    try {
+                        ComingMessage cms=new ComingMessage();
+                        cms.setHeader("init");
+                        bw.write(cms.toJson());
+                        bw.newLine();
+                        bw.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this,"Can't send init request",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (accept == null) {
+                    Toast.makeText(getApplicationContext(),"Can't connect to user "+sugarUser.getName(),Toast.LENGTH_SHORT).show();
+                    return true;
+                }
                 Intent intent = new Intent(MessageListActivity.this, MakeCallActivity.class);
                 intent.putExtra(EXTRA_IP,Clients.getInstance().getClient(ownerRoom.get(0).getName()).getSocket().getInetAddress().getHostName());
                 intent.putExtra(EXTRA_DISPLAYNAME, ownerRoom.get(0).getDisplayName());
+                intent.putExtra("USERNAME",ownerRoom.get(0).getName());
                 startActivity(intent);
                 return true;
-            case R.id.info:
-
-                return true;
-                
             default: return super.onOptionsItemSelected(item);
         }
     }

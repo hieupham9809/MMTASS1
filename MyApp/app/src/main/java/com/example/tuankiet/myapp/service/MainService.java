@@ -62,6 +62,7 @@ public class MainService extends Service {
             switch (intent.getAction()){
                 case MESSAGE_CONSTANT.SEND_INIT_SESSION:
                     ThreadServer threadServer=new ThreadServer(getApplicationContext());
+                    Log.d("ERROR", String.valueOf(threadServer==null));
                     Clients.getInstance().setThreadServer(threadServer);
                     isConnectServer=Clients.getInstance().getThreadServer().sendInit();
                     break;

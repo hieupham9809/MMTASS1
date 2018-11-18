@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,15 +49,15 @@ public class ReceiveCallActivity extends Activity {
 		mpCommingCall = MediaPlayer.create(getApplicationContext(), R.raw.ringing);
 		mpCommingCall.start();
 		TextView textView = (TextView) findViewById(R.id.textViewIncomingCall);
-		textView.setText("Incoming call: " + contactName);
+		textView.setText(contactName+" is calling you....");
 		
-		final Button endButton = (Button) findViewById(R.id.buttonEndCall1);
+		final ImageButton endButton = (ImageButton) findViewById(R.id.buttonEndCall1);
 		endButton.setVisibility(View.INVISIBLE);
 		
 		startListener();
 		
 		// ACCEPT BUTTON
-		Button acceptButton = (Button) findViewById(R.id.buttonAccept);
+		ImageButton acceptButton = (ImageButton) findViewById(R.id.buttonAccept);
 		acceptButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -74,12 +75,13 @@ public class ReceiveCallActivity extends Activity {
 
 					call.startCall();
 					// Hide the buttons as they're not longer required
-					Button accept = (Button) findViewById(R.id.buttonAccept);
+					ImageButton accept = (ImageButton) findViewById(R.id.buttonAccept);
 					accept.setEnabled(false);
+					accept.setVisibility(View.INVISIBLE);
 					
-					Button reject = (Button) findViewById(R.id.buttonReject);
+					ImageButton reject = (ImageButton) findViewById(R.id.buttonReject);
 					reject.setEnabled(false);
-					
+					reject.setVisibility(View.INVISIBLE);
 					endButton.setVisibility(View.VISIBLE);
 
 				}
@@ -90,7 +92,7 @@ public class ReceiveCallActivity extends Activity {
 		});
 		
 		// REJECT BUTTON
-		Button rejectButton = (Button) findViewById(R.id.buttonReject);
+		ImageButton rejectButton = (ImageButton) findViewById(R.id.buttonReject);
 		rejectButton.setOnClickListener(new OnClickListener() {
 			
 			@Override

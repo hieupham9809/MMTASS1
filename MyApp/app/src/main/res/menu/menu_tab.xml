@@ -7,6 +7,11 @@
         <!--android:orderInCategory="100"-->
         <!--android:title="@string/action_settings"-->
         <!--app:showAsAction="always" />-->
+    <item
+        android:title=""
+        android:orderInCategory="79"
+        android:icon="@drawable/ic_michat"
+        app:showAsAction="ifRoom|withText" />
     <item android:id="@+id/action_search"
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
