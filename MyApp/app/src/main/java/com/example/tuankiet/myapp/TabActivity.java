@@ -193,6 +193,7 @@ public class TabActivity extends AppCompatActivity {
             Fragment frag=null;
             switch (position){
                 case 0: frag= new DialogListFragment();
+                this.notifyDataSetChanged();
                 break;
                 case 1: frag= new FriendListFragment();
                 break;
