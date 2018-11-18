@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 
 public class Constant {
-    final public static String SERVER_ADDR="192.168.1.4";
+    final public static String SERVER_ADDR="172.28.12.16";
     final public static int SERVER_PORT=5000;
     final public static int LOCAL_PORT=3000;
     final public static String BASE_URL="http://o-michat.herokuapp.com/";

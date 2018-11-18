@@ -15,6 +15,7 @@ import com.google.gson.annotations.SerializedName;
 
 import michat.model.User;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -40,6 +41,16 @@ public class SugarUser extends SugarRecord {
         @SerializedName("ngaySinh")
         @Expose
         private String ngaySinh;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    private String password;
         public SugarUser(){}
 
         public SugarUser(String name, String avatar, String displayName, String role, String gioiTinh, String ngaySinh) {
@@ -109,6 +120,11 @@ public class SugarUser extends SugarRecord {
 
 
     }
+    public static SugarUser findOwner(){
+            List<SugarUser> lst=SugarUser.find(SugarUser.class,"ROLE='owner'");
+            if(lst.size()==0) return null;
+            return lst.get(0);
+    }
     public static SugarUser loadUser(String username){
         Retrofit retrofit=new Retrofit.Builder()
                 .baseUrl(Constant.BASE_URL)
@@ -161,7 +177,7 @@ public class SugarUser extends SugarRecord {
     public User toUser(){
             return new User(String.valueOf(getId()),getName(),getDisplayName(),getAvatar(),getRole(),getNgaySinh(),getGioiTinh());
     }
-    public static boolean LoginUser(String username,String password){
+    public static void LoginUser(String username, String password, Callback<UserToken> callback){
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         Retrofit retrofit=new Retrofit.Builder()
@@ -170,16 +186,7 @@ public class SugarUser extends SugarRecord {
                 .build();
         ISugarUser iSugarUser=retrofit.create(ISugarUser.class);
         Call<UserToken> tokenCall=iSugarUser.Signin(username,password);
-        UserToken token=null;
-        try {
-            token=tokenCall.execute().body();
-            if(token==null) return false;
-            TOKEN=token.getToken();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
+        tokenCall.enqueue(callback);
     }
     public UserAdapter toUserAdapter(){
             return new UserAdapter(name,avatar,displayName,role,gioiTinh,ngaySinh,"Offline");

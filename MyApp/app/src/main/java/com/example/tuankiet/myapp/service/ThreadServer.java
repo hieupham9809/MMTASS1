@@ -130,7 +130,12 @@ public class ThreadServer extends Thread {
         }
         return null;
     }
+    public interface Callback{
+        void onSuccess(String online);
+        void onError();
+    }
     public String sendGetOnline(){
+
         try{
             outputStream.write("getOnline");
             outputStream.newLine();

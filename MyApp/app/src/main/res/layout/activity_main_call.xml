@@ -5,7 +5,6 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/textViewEnterName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="enter a display name" />
@@ -15,7 +14,6 @@
         android:layout_height="wrap_content">
 
         <EditText
-            android:id="@+id/editTextDisplayName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -28,7 +26,6 @@
         </EditText>
 
         <Button
-            android:id="@+id/buttonStart"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,7 +34,6 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/textViewSelectContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select a contact to call:"
@@ -48,7 +44,6 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/buttonUpdate"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -81,7 +76,6 @@
         android:visibility="invisible">
 
         <RadioGroup
-            android:id="@+id/contactList"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content">
 
