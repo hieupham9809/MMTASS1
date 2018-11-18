@@ -520,7 +520,7 @@ public class MessageListActivity extends AppCompatActivity{
                 Intent intent = new Intent(MessageListActivity.this, MakeCallActivity.class);
                 intent.putExtra(EXTRA_IP,Clients.getInstance().getClient(ownerRoom.get(0).getName()).getSocket().getInetAddress().getHostName());
                 intent.putExtra(EXTRA_DISPLAYNAME, ownerRoom.get(0).getDisplayName());
-                intent.putExtra("USERNAME",ownerRoom.get(0).getName());
+                intent.putExtra("USERNAME",GlobalData.getInstance().getOwner().getName());
                 startActivity(intent);
                 return true;
             default: return super.onOptionsItemSelected(item);

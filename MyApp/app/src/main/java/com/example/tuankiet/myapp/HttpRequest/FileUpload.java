@@ -17,7 +17,13 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -41,7 +47,7 @@ public class FileUpload {
         this.url = url;
     }
 
-    public static void uploadFile(Uri fileUri, Context context, Callback<FileUpload> callback) {
+    public static void uploadFile(Uri fileUri, Context context, Callback<FileUpload> callback)  {
         File file = new File(FileUtils.getPath(context,fileUri));
         if(file==null) Log.d("File","NOT EXIST");
         RequestBody requestFile =
@@ -65,6 +71,7 @@ public class FileUpload {
 //        }
     }
 }
+
 class FileUtils{
 static String getPath(final Context context, final Uri uri) {
 
