@@ -63,7 +63,9 @@ public class GroupAdapter extends BaseAdapter implements Filterable{
 
         UserAdapter country = this.listData.get(position);
         holder.countryNameView.setText(country.getDisplayName());
-        holder.populationView.setText(country.getStatus());
+        if(country.getStatus().equals("Online"))
+            holder.populationView.setText(country.getStatus());
+        else holder.populationView.setText("");
         Picasso.get().load(country.getAvatar()).into(holder.flagView);
 
         return convertView;

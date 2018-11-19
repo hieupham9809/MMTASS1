@@ -177,9 +177,23 @@ public class DialogListFragment extends Fragment implements Observerable {
     public void onMessageComing(long id) {
         SugarMessage sugarMessage=SugarMessage.findById(SugarMessage.class,id);
         Message message=sugarMessage.toMessage();
-        if(!adapter.updateDialogWithMessage(String.valueOf(sugarMessage.getRoomId()),message)){
-            adapter.addItem(adapter.getItemCount(),new DialogList(String.valueOf(sugarMessage.getRoomId()),message.getUser().getAvatar(),((User)message.getUser()).getFullName(),
-                    new ArrayList<IUser>(){{add(GlobalData.getInstance().getOwner().toUser());add(message.getUser());}},message,1));
+        SugarRoom room=SugarRoom.findById(SugarRoom.class,sugarMessage.getRoomId());
+        if(!adapter.updateDialogWithMessage(String.valueOf(room.getId()),message)){
+            DialogList lst;
+            if(!room.isGroup())
+                lst=new DialogList(String.valueOf(room.getId()),message.getUser().getAvatar(),((User)message.getUser()).getFullName(),
+                    new ArrayList<IUser>(){{add(GlobalData.getInstance().getOwner().toUser());add(message.getUser());}},message,1);
+            else
+            {
+                ArrayList<String> members=new Gson().fromJson(room.getMembers(),new TypeToken<ArrayList<String>>(){}.getType());
+                ArrayList<IUser> users = new ArrayList<>() ;
+                users.add(SugarUser.findByName(room.getOwner()).toUser());
+                for(String i : members){
+                    users.add(SugarUser.findByName(i).toUser());
+                }
+                    lst=new DialogList(String.valueOf(room.getId()), "https://cdn4.iconfinder.com/data/icons/business-card-contact/512/Users_Avatar_Team-512.png", room.getName(), users, message, 1);
+            }
+            adapter.addItem(adapter.getItemCount(),lst);
         }
     }
 
@@ -195,7 +209,11 @@ public class DialogListFragment extends Fragment implements Observerable {
         List<SugarMessage> lstMsg = SugarMessage.findWithQuery(SugarMessage.class, "SELECT * FROM SUGAR_MESSAGE WHERE ROOM_ID = ?  ORDER BY ID DESC LIMIT 1", String.valueOf(sugarRoom.getId()));
         if (lstMsg.size() > 0) lastMsg = lstMsg.get(0).toMessage();
         long unRead = SugarMessage.count(SugarMessage.class, "READ_AT IS NULL AND ROOM_ID=?", new String[]{String.valueOf(sugarRoom.getId())});
-        DialogList dialogList=new DialogList(String.valueOf(sugarRoom.getId()), ownerRoom.getAvatar(), ownerRoom.getDisplayName(), users, lastMsg, (int) unRead);
+        DialogList dialogList;
+        if(!sugarRoom.isGroup())
+            dialogList=new DialogList(String.valueOf(sugarRoom.getId()), ownerRoom.getAvatar(), ownerRoom.getDisplayName(), users, lastMsg, (int) unRead);
+        else
+            dialogList=new DialogList(String.valueOf(sugarRoom.getId()), "https://cdn4.iconfinder.com/data/icons/business-card-contact/512/Users_Avatar_Team-512.png", sugarRoom.getName(), users, lastMsg, (int)unRead);
         adapter.addItem(adapter.getItemCount(),dialogList);
 
     }
@@ -209,9 +227,8 @@ public class DialogListFragment extends Fragment implements Observerable {
                 SugarRoom room=SugarRoom.findById(SugarRoom.class,intent.getLongExtra("id",-1));
                 ArrayList<String> member = new Gson().fromJson(room.getMembers(), new TypeToken<ArrayList<String>>() {
                 }.getType());
-                ArrayList<SugarUser> sugarUserList=new ArrayList<>();
                 ArrayList<IUser> usrList=new ArrayList<>();
-                List<SugarUser> sugarUsers = new ArrayList<SugarUser>() {{
+                List<SugarUser> sugarUserList = new ArrayList<SugarUser>() {{
                     add(GlobalData.getInstance().getOwner());
                 }};
                 for(String i:member){
@@ -229,8 +246,10 @@ public class DialogListFragment extends Fragment implements Observerable {
                 for (SugarUser i : sugarUserList) if(i!=null) usrList.add(i.toUser());
 
                 DialogList lst=new DialogList(String.valueOf(room.getId()), "https://cdn4.iconfinder.com/data/icons/business-card-contact/512/Users_Avatar_Team-512.png", room.getName(), usrList, null, 0);
-                if(adapter.getItemById(String.valueOf(room.getId()))==null)
-                adapter.addItem(lst);
+                if(!adapter.updateDialogWithMessage(String.valueOf(room.getId()),null)){
+                    adapter.addItem(lst);
+                }
+
             }
         }
     };

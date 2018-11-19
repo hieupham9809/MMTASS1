@@ -31,25 +31,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.tuankiet.myapp.chatorm.SugarRoom;
 import com.example.tuankiet.myapp.chatorm.SugarUser;
 import com.example.tuankiet.myapp.fragment.AddGroupFragment;
 import com.example.tuankiet.myapp.fragment.CircleTransform;
 import com.example.tuankiet.myapp.fragment.DialogListFragment;
 import com.example.tuankiet.myapp.fragment.FriendListFragment;
 import com.example.tuankiet.myapp.voicecall.ReceiveCallActivity;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import java.util.ArrayList;
-
 import michat.GlobalData;
-
-import static com.example.tuankiet.myapp.MessageListActivity.EXTRA_CONTACT;
 
 public class TabActivity extends AppCompatActivity {
 

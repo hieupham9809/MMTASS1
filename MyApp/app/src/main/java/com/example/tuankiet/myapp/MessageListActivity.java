@@ -375,7 +375,12 @@ public class MessageListActivity extends AppCompatActivity{
                     //Co the pipe cu da bi broken
                     try {
                         Socket socket = null;
-                        String[] ip = Clients.getInstance().getThreadServer().sendGetUser(sugarUser.getName()).split("/");
+                        String ip1 = Clients.getInstance().getThreadServer().sendGetUser(sugarUser.getName());
+                        if(ip1==null){
+                            Toast.makeText(this,"User "+sugarUser.getName()+" not online",Toast.LENGTH_SHORT).show();
+                            continue;
+                        }
+                        String[] ip=ip1.split("/");
                         socket = new Socket(InetAddress.getByName(ip[0]), 3000);
                         accept = new ThreadAccept(socket, getApplicationContext());
                         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(accept.getOutputStream()));
@@ -561,13 +566,13 @@ public class MessageListActivity extends AppCompatActivity{
             if(intent.getAction().equals("onMsg")){
                 onMessageComing(intent.getLongExtra("id",-1));
             }
-            else if(intent.getAction().equals("onCall")){
-                Toast.makeText(getApplicationContext(),"Receiving a call",Toast.LENGTH_SHORT).show();
-                Intent mintent = new Intent(MessageListActivity.this, ReceiveCallActivity.class);
-                mintent.putExtra(EXTRA_CONTACT, intent.getStringExtra(EXTRA_CONTACT));
-                mintent.putExtra(EXTRA_IP, intent.getStringExtra(EXTRA_IP));
-                startActivity(mintent);
-            }
+//            else if(intent.getAction().equals("onCall")){
+//                Toast.makeText(getApplicationContext(),"Receiving a call",Toast.LENGTH_SHORT).show();
+//                Intent mintent = new Intent(MessageListActivity.this, ReceiveCallActivity.class);
+//                mintent.putExtra(EXTRA_CONTACT, intent.getStringExtra(EXTRA_CONTACT));
+//                mintent.putExtra(EXTRA_IP, intent.getStringExtra(EXTRA_IP));
+//                startActivity(mintent);
+//            }
         }
     };
     BroadcastReceiver receiverCall = new BroadcastReceiver() {
@@ -578,7 +583,6 @@ public class MessageListActivity extends AppCompatActivity{
                 Intent mintent = new Intent(MessageListActivity.this, ReceiveCallActivity.class);
                 mintent.putExtra(EXTRA_CONTACT, intent.getStringExtra(EXTRA_CONTACT));
                 mintent.putExtra(EXTRA_IP, intent.getStringExtra(EXTRA_IP));
-                mintent.putExtra("Activity_Name","MessageList");
                 startActivity(mintent);
             }
         }

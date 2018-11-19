@@ -61,7 +61,7 @@
             android:value="chat_sugar" />
         <meta-data
             android:name="VERSION"
-            android:value="12" />
+            android:value="13" />
         <meta-data
             android:name="QUERY_LOG"
             android:value="true" />

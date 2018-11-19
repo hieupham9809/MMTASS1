@@ -27,6 +27,7 @@ import java.net.Socket;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -125,13 +126,17 @@ public class ThreadAccept extends Thread {
                                 String owner = group[1];
                                 String members = group[2];
                                 room = new SugarRoom();
-                                Log.d("CREATE NEW ROOM", group[0]);
                                 room.setGroup(true);
                                 room.setMembers(members);
                                 room.setName(name);
                                 room.setOwner(owner);
                                 room.save();
                             }
+                        }
+                        else if(room.isGroup()) {
+                            String group[]=cm.getGroup().split(":");
+                            room.setMembers(group[2]);
+                            room.save();
                         }
 
                         //luu tin nhan vao database
@@ -149,6 +154,7 @@ public class ThreadAccept extends Thread {
                         if (sugarMessage != null) {
                             Intent intent = new Intent();
                             intent.setAction("onMsg");
+                            Log.d("MSG",sugarMessage.getText());
                             intent.putExtra("id", sugarMessage.getId());
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                         }

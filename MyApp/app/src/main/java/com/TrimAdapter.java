@@ -57,6 +57,7 @@ public class TrimAdapter extends BaseAdapter{
 
         SugarMessage country = this.lst.get(position);
         holder.trimMessage.setText(country.getText());
+
         Picasso.get().load(SugarUser.findById(SugarUser.class,country.getOwner()).getAvatar()).into(holder.flagView);
         return convertView;
     }

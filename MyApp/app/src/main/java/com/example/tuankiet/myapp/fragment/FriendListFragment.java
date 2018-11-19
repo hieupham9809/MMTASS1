@@ -97,6 +97,7 @@ public class FriendListFragment extends Fragment {
                     HashSet<String> set=new HashSet<>();
                     set.add(iuser.getName());
                     room.setMembers(new Gson().toJson(set));
+                    room.setGroup(false);
                     room.save();
                     Observer.getInstance().notifyonAddDialog(room);
                 }

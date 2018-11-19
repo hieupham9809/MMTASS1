@@ -60,6 +60,7 @@ public class FileUpload {
                 .build();
         FileUploadService fileUploadService=retrofit.create(FileUploadService.class);
         Call<FileUpload> fileUploadCall=fileUploadService.uploadFile(SugarUser.TOKEN,body);
+        Log.d("TOKEN",SugarUser.TOKEN);
         fileUploadCall.enqueue(callback);
 //        try {
 //            Response<FileUpload> fileUpload = fileUploadCall.execute();

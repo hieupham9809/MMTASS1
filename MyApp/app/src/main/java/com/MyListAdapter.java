@@ -62,11 +62,11 @@ public class MyListAdapter extends BaseAdapter {
 
         UserAdapter country = this.listData.get(position);
         holder.countryNameView.setText(country.getDisplayName());
+        if(country.getStatus().equals("Online"))
         holder.populationView.setText(country.getStatus());
+        else holder.populationView.setText("");
         if(country.getStatus().equals("Online"))
             holder.populationView.setTextColor(context.getResources().getColor(R.color.green));
-        else holder.populationView.setTextColor(context.getResources().getColor(R.color.black));
-
         Picasso.get().load(country.getAvatar()).into(holder.flagView,new com.squareup.picasso.Callback() {
             @Override
             public void onSuccess() {
